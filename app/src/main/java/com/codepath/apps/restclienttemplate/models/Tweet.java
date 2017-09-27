@@ -55,7 +55,7 @@ public class Tweet {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
+        //relativeDate.
         return relativeDate;
     }
 }

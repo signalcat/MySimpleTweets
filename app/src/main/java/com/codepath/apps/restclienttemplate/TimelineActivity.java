@@ -21,6 +21,9 @@ public class TimelineActivity extends AppCompatActivity {
 
     private TwitterClient client;
 
+    // Store a member variable for the listener
+    private EndlessRecyclerViewScrollListener scrollListener;
+
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
     TweetAdapter tweetAdapter;
@@ -29,6 +32,13 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+
+//        // 1. First, clear the array of data
+//        tweets.clear();
+//        // 2. Notify the adapter of the update
+//        tweetAdapter.notifyDataSetChanged(); // or notifyItemRangeRemoved
+//        // 3. Reset endless scroll listener when performing a new search
+//        scrollListener.resetState();
 
         client = TwitterApp.getRestClient();
 
@@ -39,11 +49,74 @@ public class TimelineActivity extends AppCompatActivity {
         // Construct the adapter from this datasource
         tweetAdapter = new TweetAdapter(tweets);
         // RecyclerView setup (layout manager, use adapter)
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvTweets.setLayoutManager(linearLayoutManager);
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromApi();
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        rvTweets.addOnScrollListener(scrollListener);
+
         // Set the adapter
         rvTweets.setAdapter(tweetAdapter);
 
         populateTimeLine();
+    }
+
+    // Append more page of data into the adapter
+    // This method probably sends out a network request and appends new data items to your adapter.
+    public void loadNextDataFromApi() {
+        client.getMoreHomeTimeline(new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("TwitterClient", response.toString());
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+//                Log.d("TwitterClient", response.toString());
+                // Iterate through the JSON array
+                // For each entry deserialize the JSON object
+                for (int i = 0; i < response.length(); i++) {
+                    // Convert each object to a Tweet model
+                    // Add that Tweet model to our data source
+                    // Notify the adapter that we've added an item
+                    try {
+                        Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
+                        tweets.add(tweet);
+                        tweetAdapter.notifyItemRangeInserted(tweetAdapter.getItemCount()-1,  10);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.d("TwitterClient", responseString);
+                throwable.printStackTrace();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                Log.d("TwitterClient", errorResponse.toString());
+                throwable.printStackTrace();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.d("TwitterClient", errorResponse.toString());
+                throwable.printStackTrace();
+            }
+        }, (int) tweets.get(tweetAdapter.getItemCount()).uid);
     }
 
     private void populateTimeLine() {
