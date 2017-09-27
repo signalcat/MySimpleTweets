@@ -25,6 +25,7 @@ public class Tweet {
     public String body;
     public long uid; // data base ID for the tweet
     public User user;
+    public String screenName;
     public String createdAt;
     public String timeElapsed; // The difference between the create time and the current time
     public static long now = System.currentTimeMillis();
@@ -38,6 +39,7 @@ public class Tweet {
         tweet.uid = jsonObject.getLong("id");
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+        tweet.screenName = tweet.user.screenName;
         tweet.timeElapsed = getRelativeTimeAgo(tweet.createdAt);
         return tweet;
     }

@@ -4,7 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -33,12 +35,25 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-//        // 1. First, clear the array of data
-//        tweets.clear();
-//        // 2. Notify the adapter of the update
-//        tweetAdapter.notifyDataSetChanged(); // or notifyItemRangeRemoved
-//        // 3. Reset endless scroll listener when performing a new search
-//        scrollListener.resetState();
+        // Find the toolbar view inside the activity layout
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        // Make sure the toolbar exists in the activity and is not null
+        setSupportActionBar(toolbar);
+
+        // Display icon in the toolbar
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.twitter_icon_square);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+//        if (tweets != null && tweetAdapter != null && scrollListener != null) {
+//            // 1. First, clear the array of data
+//            tweets.clear();
+//            // 2. Notify the adapter of the update
+//            tweetAdapter.notifyDataSetChanged(); // or notifyItemRangeRemoved
+//            // 3. Reset endless scroll listener when performing a new search
+//            scrollListener.resetState();
+//        }
 
         client = TwitterApp.getRestClient();
 
@@ -48,30 +63,44 @@ public class TimelineActivity extends AppCompatActivity {
         tweets = new ArrayList<>();
         // Construct the adapter from this datasource
         tweetAdapter = new TweetAdapter(tweets);
+        // Set the adapter
+        rvTweets.setAdapter(tweetAdapter);
+
         // RecyclerView setup (layout manager, use adapter)
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvTweets.setLayoutManager(linearLayoutManager);
+
+        populateTimeLine();
+
         // Retain an instance so that you can call `resetState()` for fresh searches
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                loadNextDataFromApi();
+                long lastId = tweets.get(tweetAdapter.getItemCount()-1).uid;
+                loadNextDataFromApi(lastId);
+                //populateTimeLine();
             }
         };
         // Adds the scroll listener to RecyclerView
         rvTweets.addOnScrollListener(scrollListener);
 
-        // Set the adapter
-        rvTweets.setAdapter(tweetAdapter);
+    }
 
-        populateTimeLine();
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     // Append more page of data into the adapter
     // This method probably sends out a network request and appends new data items to your adapter.
-    public void loadNextDataFromApi() {
+    public void loadNextDataFromApi(long lastId) {
+        Log.d("DEBUG", "lastId");
+        client.lastId = lastId;
         client.getMoreHomeTimeline(new JsonHttpResponseHandler() {
 
             @Override
@@ -116,7 +145,7 @@ public class TimelineActivity extends AppCompatActivity {
                 Log.d("TwitterClient", errorResponse.toString());
                 throwable.printStackTrace();
             }
-        }, (int) tweets.get(tweetAdapter.getItemCount()).uid);
+        });
     }
 
     private void populateTimeLine() {
@@ -166,4 +195,6 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }
