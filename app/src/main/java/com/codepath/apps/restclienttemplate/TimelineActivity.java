@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,7 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
+import com.codepath.apps.restclienttemplate.fragments.NewTweetDialogFragment;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -94,6 +97,22 @@ public class TimelineActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.miCompose) {
+            // Show new tweet fragment
+            showNewTweetDialog();
+        }
+        return true;
+    }
+
+    private void showNewTweetDialog() {
+        FragmentManager fm  = getSupportFragmentManager();
+        NewTweetDialogFragment newTweetDialogFragment = NewTweetDialogFragment.newInstance("Some title");
+        newTweetDialogFragment.show(fm, "fragment_new_tweet");
     }
 
     // Append more page of data into the adapter
