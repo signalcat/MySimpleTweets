@@ -15,6 +15,7 @@ import com.codepath.apps.restclienttemplate.fragments.NewTweetDialogFragment;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,10 +23,12 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity
+    implements NewTweetDialogFragment.OnPostListener {
 
     private TwitterClient client;
     private User userMe;
@@ -68,6 +71,7 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets = (RecyclerView) findViewById(R.id.rvTweet);
         // Init the arraylist (data source)
         tweets = new ArrayList<>();
+
         // Construct the adapter from this datasource
         tweetAdapter = new TweetAdapter(tweets);
         // Set the adapter
@@ -94,6 +98,7 @@ public class TimelineActivity extends AppCompatActivity {
         };
         // Adds the scroll listener to RecyclerView
         rvTweets.addOnScrollListener(scrollListener);
+
 
     }
 
@@ -258,6 +263,19 @@ public class TimelineActivity extends AppCompatActivity {
                 throwable.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public void onUpdateTweet(Tweet newTweet) {
+        tweets.add(0,newTweet);
+        tweetAdapter.notifyItemInserted(0);
+
+        newTweet.save();
+        List<Tweet> tweetDb = SQLite.select().from(Tweet.class).queryList();
+        for (Tweet z: tweetDb)
+            Log.i("TwitterClient", "onClick: " + z.toString());
+
+
     }
 
 }
