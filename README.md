@@ -51,7 +51,9 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://imgur.com/9J3mY8u.gif' title='LOGIN' alt='Video Walkthrough-LOGIN' />
+<img src='https://imgur.com/9J3mY8u.gif' title='Login' alt='Video Walkthrough-LOGIN' />
+<img src='https://imgur.com/f8wvHdi.gif' title='Post' alt='Video Walkthrough-LOGIN' />
+<img src='https://imgur.com/uItg0bo.gif' title='Display' alt='Video Walkthrough-LOGIN' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
