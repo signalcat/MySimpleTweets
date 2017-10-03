@@ -18,20 +18,16 @@
         app:titleTextColor="@android:color/white">
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_below="@id/toolbar"
-        android:id="@+id/rvTweet"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
     <FrameLayout
         android:id="@+id/fragment_placeholder"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </FrameLayout>
+
+    <fragment
+        android:id="@+id/fragment_timeline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.codepath.apps.restclienttemplate.fragments.MentionsTimelineFragment"/>
 
 </RelativeLayout>

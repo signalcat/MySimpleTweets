@@ -46,13 +46,12 @@ public class Tweet extends BaseModel {
     public static long now = System.currentTimeMillis();
 
     // Constructor used for testing
-    public Tweet(long uid, User user, String screenName, String createdAt, String body, String timeElapsed) {
+    public Tweet(long uid, User user, String screenName, String createdAt, String body) {
         this.uid = uid;
         this.user = user;
         this.screenName = screenName;
         this.createdAt = createdAt;
         this.body = body;
-        this.timeElapsed = timeElapsed;
 
     }
     public Tweet() {

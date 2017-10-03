@@ -33,7 +33,10 @@ import org.parceler.Parcels;
 
 import cz.msebera.android.httpclient.Header;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by hezhang on 9/29/17.
@@ -98,7 +101,11 @@ public class NewTweetDialogFragment extends android.support.v4.app.DialogFragmen
                 //userMe.status = etCompose.getText().toString();
                 Log.d("TwitterClient", "BEGIN|" + tweetInput + "|END");
                 postNewTweet(tweetInput);
-                Tweet newTweet = new Tweet(1, userMe, "hezhang", "Sun Oct 01 00:37:26 +0000 2017", tweetInput," 1s");
+
+                String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+                SimpleDateFormat currentTime = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+                Log.d("Current time: ", currentTime.toString());
+                Tweet newTweet = new Tweet(userMe.uid, userMe, userMe.screenName, "Sun Oct 01 00:37:26 +0000 2017", tweetInput);
                 //t.save();
                 //List<Tweet> tweets = SQLite.select().from(Tweet.class).queryList();
                 //for (Tweet z: tweets)

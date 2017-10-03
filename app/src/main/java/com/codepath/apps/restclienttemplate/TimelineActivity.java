@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.codepath.apps.restclienttemplate.fragments.NewTweetDialogFragment;
+import com.codepath.apps.restclienttemplate.fragments.TweetsListFragment;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -27,18 +28,9 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class TimelineActivity extends AppCompatActivity
-    implements NewTweetDialogFragment.OnPostListener {
+public class TimelineActivity extends AppCompatActivity {
 
-    private TwitterClient client;
-    private User userMe;
-
-    // Store a member variable for the listener
-    private EndlessRecyclerViewScrollListener scrollListener;
-
-    ArrayList<Tweet> tweets;
-    RecyclerView rvTweets;
-    TweetAdapter tweetAdapter;
+    TweetsListFragment fragmentTweetsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,40 +57,7 @@ public class TimelineActivity extends AppCompatActivity
 //            scrollListener.resetState();
 //        }
 
-        client = TwitterApp.getRestClient();
-
-        // Find the recycler view
-        rvTweets = (RecyclerView) findViewById(R.id.rvTweet);
-        // Init the arraylist (data source)
-        tweets = new ArrayList<>();
-
-        // Construct the adapter from this datasource
-        tweetAdapter = new TweetAdapter(tweets);
-        // Set the adapter
-        rvTweets.setAdapter(tweetAdapter);
-
-        // RecyclerView setup (layout manager, use adapter)
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rvTweets.setLayoutManager(linearLayoutManager);
-
-        populateTimeLine();
-        getMyInfoObject();
-
-
-        // Retain an instance so that you can call `resetState()` for fresh searches
-        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                long lastId = tweets.get(tweetAdapter.getItemCount()-1).uid;
-                loadNextDataFromApi(lastId);
-                //populateTimeLine();
-            }
-        };
-        // Adds the scroll listener to RecyclerView
-        rvTweets.addOnScrollListener(scrollListener);
-
+        fragmentTweetsList = (TweetsListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_timeline);
 
     }
 
@@ -115,167 +74,27 @@ public class TimelineActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.miCompose) {
             // Show new tweet fragment
-            showNewTweetDialog();
+            //showNewTweetDialog();
         }
         return true;
     }
 
-    private void showNewTweetDialog() {
-        FragmentManager fm  = getSupportFragmentManager();
-        NewTweetDialogFragment newTweetDialogFragment = NewTweetDialogFragment.newInstance(Parcels.wrap(userMe));
-        newTweetDialogFragment.show(fm, "fragment_new_tweet");
-    }
+//    private void showNewTweetDialog() {
+//        FragmentManager fm  = getSupportFragmentManager();
+//        NewTweetDialogFragment newTweetDialogFragment = NewTweetDialogFragment.newInstance(Parcels.wrap(userMe));
+//        newTweetDialogFragment.show(fm, "fragment_new_tweet");
+//    }
 
-    // Append more page of data into the adapter
-    // This method probably sends out a network request and appends new data items to your adapter.
-    public void loadNextDataFromApi(long lastId) {
-        Log.d("DEBUG", "lastId");
-        client.lastId = lastId;
-        client.getMoreHomeTimeline(new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("TwitterClient", response.toString());
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-//                Log.d("TwitterClient", response.toString());
-                // Iterate through the JSON array
-                // For each entry deserialize the JSON object
-                for (int i = 0; i < response.length(); i++) {
-                    // Convert each object to a Tweet model
-                    // Add that Tweet model to our data source
-                    // Notify the adapter that we've added an item
-                    try {
-                        Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
-                        tweets.add(tweet);
-                        tweetAdapter.notifyItemRangeInserted(tweetAdapter.getItemCount()-1,  10);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("TwitterClient", responseString);
-                throwable.printStackTrace();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.d("TwitterClient", errorResponse.toString());
-                throwable.printStackTrace();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.d("TwitterClient", errorResponse.toString());
-                throwable.printStackTrace();
-            }
-        });
-    }
-
-    private void populateTimeLine() {
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("TwitterClient", response.toString());
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-//                Log.d("TwitterClient", response.toString());
-                // Iterate through the JSON array
-                // For each entry deserialize the JSON object
-                for (int i = 0; i < response.length(); i++) {
-                    // Convert each object to a Tweet model
-                    // Add that Tweet model to our data source
-                    // Notify the adapter that we've added an item
-                    try {
-                        Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
-                        tweets.add(tweet);
-                        tweetAdapter.notifyItemInserted(tweets.size() - 1);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("TwitterClient", responseString);
-                throwable.printStackTrace();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.d("TwitterClient", errorResponse.toString());
-                throwable.printStackTrace();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.d("TwitterClient", errorResponse.toString());
-                throwable.printStackTrace();
-            }
-        });
-    }
-
-    private void getMyInfoObject() {
-        client.getMyInfo(new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("TwitterClient", response.toString());
-                try {
-                    userMe = User.fromJSON(response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("TwitterClient", response.toString());
-                }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("TwitterClient", responseString);
-                throwable.printStackTrace();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.d("TwitterClient", errorResponse.toString());
-                throwable.printStackTrace();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.d("TwitterClient", errorResponse.toString());
-                throwable.printStackTrace();
-            }
-        });
-    }
-
-    @Override
-    public void onUpdateTweet(Tweet newTweet) {
-        tweets.add(0,newTweet);
-        tweetAdapter.notifyItemInserted(0);
-
-        newTweet.save();
-        List<Tweet> tweetDb = SQLite.select().from(Tweet.class).queryList();
-        for (Tweet z: tweetDb)
-            Log.i("TwitterClient", "onClick: " + z.toString());
-
-
-    }
+//    @Override
+//    public void onUpdateTweet(Tweet newTweet) {
+//        tweets.add(0,newTweet);
+//        tweetAdapter.notifyItemInserted(0);
+//
+//        newTweet.save();
+//        List<Tweet> tweetDb = SQLite.select().from(Tweet.class).queryList();
+//        for (Tweet z: tweetDb)
+//            Log.i("TwitterClient", "onClick: " + z.toString());
+//
+//    }
 
 }
