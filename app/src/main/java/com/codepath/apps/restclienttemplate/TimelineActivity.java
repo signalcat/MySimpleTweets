@@ -1,7 +1,10 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.app.ActionBar;
 import android.os.Parcel;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +16,7 @@ import android.view.MenuItem;
 
 import com.codepath.apps.restclienttemplate.fragments.NewTweetDialogFragment;
 import com.codepath.apps.restclienttemplate.fragments.TweetsListFragment;
+import com.codepath.apps.restclienttemplate.fragments.TweetsPagerAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -29,8 +33,6 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class TimelineActivity extends AppCompatActivity {
-
-    TweetsListFragment fragmentTweetsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +59,13 @@ public class TimelineActivity extends AppCompatActivity {
 //            scrollListener.resetState();
 //        }
 
-        fragmentTweetsList = (TweetsListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_timeline);
+        // get the view pager
+        ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
+        // set the adapter for the pager
+        vpPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager(), this));
+        // setup the tablayout to use the view pager
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(vpPager);
 
     }
 
