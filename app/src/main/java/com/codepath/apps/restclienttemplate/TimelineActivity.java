@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Parcel;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -85,6 +86,14 @@ public class TimelineActivity extends AppCompatActivity {
             //showNewTweetDialog();
         }
         return true;
+    }
+
+    public void onProfileView(MenuItem item) {
+        // Launch the profile view
+        Intent i = new Intent(this, ProfileActivity.class);
+        startActivity(i);
+        // user_timeline
+        // verify_credentials
     }
 
 //    private void showNewTweetDialog() {
