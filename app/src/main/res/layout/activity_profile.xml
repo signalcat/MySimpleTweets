@@ -15,14 +15,65 @@
         android:background="@color/toolbarBackground"
         app:titleTextColor="@android:color/white">
     </android.support.v7.widget.Toolbar>
+
     <RelativeLayout
         android:layout_below="@id/toolbar"
         android:id="@+id/rlUserHeader"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="wrap_content">
+        
+        <ImageView
+            android:src="@android:drawable/screen_background_light_transparent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="10dp"
+            android:id="@+id/ivProfileImage"
+            android:layout_width="75dp"
+            android:layout_height="75dp" />
+        
+        <TextView
+            android:textSize="16sp"
+            android:text="Name"
+            android:id="@+id/tvName"
+            android:layout_toRightOf="@id/ivProfileImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_below="@id/tvName"
+            android:textSize="12sp"
+            android:text="@string/tagline"
+            android:layout_alignStart="@+id/tvName"
+            android:id="@+id/tvTagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </RelativeLayout>
-    <FrameLayout
+
+    <LinearLayout
+        android:layout_marginBottom="10dp"
         android:layout_below="@id/rlUserHeader"
+        android:id="@+id/llCounts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="5 Followers"
+            android:id="@+id/tvFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:text="5 Following"
+            android:id="@+id/tvFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_below="@id/llCounts"
         android:id="@+id/flContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></FrameLayout>
