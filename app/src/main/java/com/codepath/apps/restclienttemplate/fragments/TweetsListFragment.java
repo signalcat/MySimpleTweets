@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.R;
@@ -23,8 +24,13 @@ import java.util.ArrayList;
  * Created by hezhang on 10/3/17.
  */
 
-public class TweetsListFragment extends Fragment {
+public class TweetsListFragment extends Fragment
+        implements TweetAdapter.TweetAdapterListener {
 
+    public interface TweetSelectedListener {
+        // handle tweet selection
+        public void onTweetSelected(Tweet tweet);
+    }
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
     TweetAdapter tweetAdapter;
@@ -46,7 +52,7 @@ public class TweetsListFragment extends Fragment {
         tweets = new ArrayList<>();
 
         // Construct the adapter from this datasource
-        tweetAdapter = new TweetAdapter(tweets);
+        tweetAdapter = new TweetAdapter(tweets, this);
         // Set the adapter
         rvTweets.setAdapter(tweetAdapter);
 
@@ -86,5 +92,11 @@ public class TweetsListFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
+    }
+
+    @Override
+    public void onItemSelected(View view, int position) {
+        Tweet tweet = tweets.get(position);
+        ((TweetSelectedListener) getActivity()).onTweetSelected(tweet);
     }
 }

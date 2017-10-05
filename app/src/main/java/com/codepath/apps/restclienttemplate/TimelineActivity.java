@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.fragments.NewTweetDialogFragment;
 import com.codepath.apps.restclienttemplate.fragments.TweetsListFragment;
@@ -33,7 +34,10 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class TimelineActivity extends AppCompatActivity {
+import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
+
+public class TimelineActivity extends AppCompatActivity
+    implements TweetsListFragment.TweetSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +100,12 @@ public class TimelineActivity extends AppCompatActivity {
         // verify_credentials
     }
 
-//    private void showNewTweetDialog() {
+    @Override
+    public void onTweetSelected(Tweet tweet) {
+        Toast.makeText(this, tweet.body, Toast.LENGTH_LONG).show();
+    }
+
+    //    private void showNewTweetDialog() {
 //        FragmentManager fm  = getSupportFragmentManager();
 //        NewTweetDialogFragment newTweetDialogFragment = NewTweetDialogFragment.newInstance(Parcels.wrap(userMe));
 //        newTweetDialogFragment.show(fm, "fragment_new_tweet");
