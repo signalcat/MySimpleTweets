@@ -55,15 +55,6 @@ public class TimelineActivity extends AppCompatActivity
         getSupportActionBar().setLogo(R.drawable.twitter_icon_square);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
 
-//        if (tweets != null && tweetAdapter != null && scrollListener != null) {
-//            // 1. First, clear the array of data
-//            tweets.clear();
-//            // 2. Notify the adapter of the update
-//            tweetAdapter.notifyDataSetChanged(); // or notifyItemRangeRemoved
-//            // 3. Reset endless scroll listener when performing a new search
-//            scrollListener.resetState();
-//        }
-
         // get the view pager
         ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
         // set the adapter for the pager
