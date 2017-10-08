@@ -27,8 +27,7 @@ import cz.msebera.android.httpclient.Header;
  * Created by hezhang on 10/3/17.
  */
 
-public class HomeTimeLineFragment extends TweetsListFragment
-        implements NewTweetDialogFragment.OnPostListener {
+public class HomeTimeLineFragment extends TweetsListFragment {
 
     private TwitterClient client;
 
@@ -41,7 +40,7 @@ public class HomeTimeLineFragment extends TweetsListFragment
         client = TwitterApp.getRestClient();
 
         populateTimeLine();
-        TimelineActivity.homeTimeLineFragment = this;
+        //TimelineActivity.homeTimeLineFragment = this;
         //getMyInfoObject();
     }
 
@@ -134,8 +133,7 @@ public class HomeTimeLineFragment extends TweetsListFragment
         });
     }
 
-    @Override
-    public void onUpdateTweet(Tweet newTweet) {
+    public void insertTweetAtTop (Tweet newTweet) {
         tweets.add(0,newTweet);
         tweetAdapter.notifyItemInserted(0);
 

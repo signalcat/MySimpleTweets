@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.fragments.HomeTimeLineFragment;
@@ -38,14 +39,18 @@ import cz.msebera.android.httpclient.Header;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 public class TimelineActivity extends AppCompatActivity
-    implements TweetsListFragment.TweetSelectedListener {
+    implements TweetsListFragment.TweetSelectedListener, NewTweetDialogFragment.OnPostListener {
 
     private TwitterClient client;
     private User userMe;
 
     // It is ridiculously and unnecessarily cumbersome to obtain a reference to homeTimeLineFragment, so we use this hack to simply things.
     // Unless this class itself gets unloaded, this should be reliable.
-    public static HomeTimeLineFragment homeTimeLineFragment;
+    //public static HomeTimeLineFragment homeTimeLineFragment;
+
+    // If viewpager is dynamic with many pages and fragments, we
+    // want to use this to smartly cache the fragments
+    private SmartFragmentStatePagerAdapter adapterViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +70,12 @@ public class TimelineActivity extends AppCompatActivity
 
         // get the view pager
         ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
+
+        // Get the smart adapter
+        adapterViewPager = new TweetsPagerAdapter(getSupportFragmentManager());
+
         // set the adapter for the pager
-        vpPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager(), this));
+        vpPager.setAdapter(adapterViewPager);
         // setup the tablayout to use the view pager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(vpPager);
@@ -153,4 +162,13 @@ public class TimelineActivity extends AppCompatActivity
         });
     }
 
+
+    @Override
+    public void onUpdateTweet(Tweet newTweet) {
+        // Gets homeline Fragment item within the pager
+        HomeTimeLineFragment homeTimeLineFragment = (HomeTimeLineFragment) adapterViewPager.getRegisteredFragment(0);
+        // Pass the new tweet to the homeline fragment
+        homeTimeLineFragment.insertTweetAtTop(newTweet);
+        Toast.makeText(getContext(), "onUpdate", Toast.LENGTH_LONG).show();
+    }
 }

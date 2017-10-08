@@ -6,23 +6,25 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 
+import com.codepath.apps.restclienttemplate.SmartFragmentStatePagerAdapter;
+
 /**
  * Created by hezhang on 10/3/17.
  */
+// Extend from SmartFragmentStatePagerAdapter now instead for more dynamic ViewPager items
+public class TweetsPagerAdapter extends SmartFragmentStatePagerAdapter {
+    private static int NUM_ITEMS = 2;
 
-public class TweetsPagerAdapter extends FragmentPagerAdapter {
     private String tabTitles[] = new String[] {"Home", "Mentions"};
-    private Context context;
 
-    public TweetsPagerAdapter(FragmentManager fm, Context context) {
+    public TweetsPagerAdapter(FragmentManager fm) {
         super(fm);
-        this.context = context;
     }
 
     // Return the total # of fragments
     @Override
     public int getCount() {
-        return 2;
+        return NUM_ITEMS;
     }
 
     // Return the fragment to use depending on the position
