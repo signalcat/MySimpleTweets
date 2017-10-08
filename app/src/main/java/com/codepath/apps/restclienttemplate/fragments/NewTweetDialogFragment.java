@@ -112,7 +112,8 @@ public class NewTweetDialogFragment extends android.support.v4.app.DialogFragmen
                 //    Log.i("TwitterClient", "onClick: " + z.toString());
 
                 // Return filters back to activity through the implemented listener
-                OnPostListener listener = (OnPostListener) getActivity();
+
+                OnPostListener listener = (OnPostListener) TimelineActivity.homeTimeLineFragment;
                 listener.onUpdateTweet(newTweet);
                 // Close the dialog to return back to the parent activity
                 dismiss();

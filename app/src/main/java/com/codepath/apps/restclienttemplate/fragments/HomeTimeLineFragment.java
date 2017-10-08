@@ -7,15 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.codepath.apps.restclienttemplate.TimelineActivity;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -23,7 +27,8 @@ import cz.msebera.android.httpclient.Header;
  * Created by hezhang on 10/3/17.
  */
 
-public class HomeTimeLineFragment extends TweetsListFragment {
+public class HomeTimeLineFragment extends TweetsListFragment
+        implements NewTweetDialogFragment.OnPostListener {
 
     private TwitterClient client;
 
@@ -36,6 +41,7 @@ public class HomeTimeLineFragment extends TweetsListFragment {
         client = TwitterApp.getRestClient();
 
         populateTimeLine();
+        TimelineActivity.homeTimeLineFragment = this;
         //getMyInfoObject();
     }
 
@@ -128,44 +134,14 @@ public class HomeTimeLineFragment extends TweetsListFragment {
         });
     }
 
-//    private void getMyInfoObject() {
-//        client.getMyInfo(new JsonHttpResponseHandler() {
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                Log.d("TwitterClient", response.toString());
-//                try {
-//                    userMe = User.fromJSON(response);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-//                Log.d("TwitterClient", response.toString());
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//                Log.d("TwitterClient", responseString);
-//                throwable.printStackTrace();
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-//                Log.d("TwitterClient", errorResponse.toString());
-//                throwable.printStackTrace();
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-//                super.onFailure(statusCode, headers, throwable, errorResponse);
-//                Log.d("TwitterClient", errorResponse.toString());
-//                throwable.printStackTrace();
-//            }
-//        });
-//    }
+    @Override
+    public void onUpdateTweet(Tweet newTweet) {
+        tweets.add(0,newTweet);
+        tweetAdapter.notifyItemInserted(0);
 
-
+        newTweet.save();
+        List<Tweet> tweetDb = SQLite.select().from(Tweet.class).queryList();
+        for (Tweet z: tweetDb)
+            Log.i("TwitterClient", "onClick: " + z.toString());
+    }
 }
