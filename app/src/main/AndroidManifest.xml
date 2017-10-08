@@ -35,6 +35,7 @@
         </activity>
         <activity android:name=".TimelineActivity" />
         <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".UsersProfileActivity"></activity>
     </application>
 
 </manifest>

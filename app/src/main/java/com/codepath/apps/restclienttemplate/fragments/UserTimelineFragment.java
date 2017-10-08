@@ -85,8 +85,9 @@ public class UserTimelineFragment extends TweetsListFragment {
     @Override
     public void loadNextDataFromApi(long lastId) {
         Log.d("DEBUG", "lastId");
+        String screenName = getArguments().getString("screen_name");
         client.lastId = lastId;
-        client.getMoreHomeTimeline(new JsonHttpResponseHandler() {
+        client.getMoreUserTimeline(screenName, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -102,14 +103,14 @@ public class UserTimelineFragment extends TweetsListFragment {
                     // Convert each object to a Tweet model
                     // Add that Tweet model to our data source
                     // Notify the adapter that we've added an item
-//                    try {
-//                        Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
-                        Tweet tweet = new Tweet(2, new User(), "Rebecca", "111111", "hello");
+                    try {
+                        Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
+                        //Tweet tweet = new Tweet(2, new User(), "Rebecca", "111111", "hello");
                         tweets.add(tweet);
                         tweetAdapter.notifyItemRangeInserted(tweetAdapter.getItemCount()-1,  10);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 

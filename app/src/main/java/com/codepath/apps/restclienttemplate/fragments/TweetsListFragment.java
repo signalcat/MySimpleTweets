@@ -31,9 +31,13 @@ public abstract class TweetsListFragment extends Fragment
         implements TweetAdapter.TweetAdapterListener {
 
     public interface TweetSelectedListener {
-        // handle tweet selection
-        public void onTweetSelected(Tweet tweet);
+//        // handle tweet selection
+//        public void onTweetSelected(Tweet tweet);
+
+        // handle image view click
+        public void onImageClicked(Tweet tweet);
     }
+
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
     TweetAdapter tweetAdapter;
@@ -97,10 +101,15 @@ public abstract class TweetsListFragment extends Fragment
                 }
     }
 
+//    @Override
+//    public void onItemSelected(View view, int position) {
+//        Tweet tweet = tweets.get(position);
+//        ((TweetSelectedListener) getActivity()).onTweetSelected(tweet);
+//    }
     @Override
     public void onItemSelected(View view, int position) {
         Tweet tweet = tweets.get(position);
-        ((TweetSelectedListener) getActivity()).onTweetSelected(tweet);
+        ((TweetSelectedListener) getActivity()).onImageClicked(tweet);
     }
 
     // Append more page of data into the adapter

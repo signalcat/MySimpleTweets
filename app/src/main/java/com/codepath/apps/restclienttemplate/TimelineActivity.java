@@ -112,9 +112,20 @@ public class TimelineActivity extends AppCompatActivity
         // verify_credentials
     }
 
+
+//    @Override
+//    public void onTweetSelected(Tweet tweet) {
+//        Toast.makeText(this, tweet.body, Toast.LENGTH_LONG).show();
+//    }
+
     @Override
-    public void onTweetSelected(Tweet tweet) {
-        Toast.makeText(this, tweet.body, Toast.LENGTH_LONG).show();
+    public void onImageClicked(Tweet tweet) {
+//        Toast.makeText(this, tweet.screenName, Toast.LENGTH_LONG).show();
+        // Start the intent
+        Intent i = new Intent(this, UsersProfileActivity.class);
+        // Pass the clicked user information
+        i.putExtra("clickedUser", Parcels.wrap(tweet.user));
+        startActivity(i);
     }
 
     private void showNewTweetDialog() {
