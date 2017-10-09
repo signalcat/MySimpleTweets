@@ -132,6 +132,7 @@ Here's a walkthrough of implemented user stories:
 
 <img src='https://imgur.com/UWt9m9J.gif'/>
 <img src='https://imgur.com/LJmBQBx.gif'/>
+<img src='https://imgur.com/a/O6P6Q.gif'/>
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
